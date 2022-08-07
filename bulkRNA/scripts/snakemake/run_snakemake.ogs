@@ -1,0 +1,22 @@
+#!/bin/sh
+#$ -cwd
+#$ -N cluster_snakemake
+#$ -m abe
+#$ -M olneykimberly@mayo.edu
+#$ -l h_vmem=2G
+#$ -q 1-day,4-day,lg-mem
+#$ -notify
+
+date
+# activate conda environment
+source $HOME/.bash_profile
+module load python
+conda activate pigs
+
+# change directory to where Snakefile is located
+CWD="/research/labs/neurology/fryer/m239830/Ecoli_pigs/bulkRNA/scripts/snakemake"
+cd $CWD
+
+# run snakemake
+snakemake -s Snakefile -j 50 --rerun-incomplete --latency-wait 20 --cluster "qsub -l h_vmem=10G -q 1-day,4-day,lg-mem -pe threaded 8"
+date

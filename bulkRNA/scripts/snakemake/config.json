@@ -1,0 +1,755 @@
+{
+    "Commment_Input_Output_Directories": "This section specifies the input and output directories for scripts",
+    "rawReads" : "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+    "rawQC" : "../../rawQC/",
+    "trimmedReads" : "../../trimmedReads/",
+    "trimmedQC" : "../../trimmedQC/",
+    "starAligned" : "../../starAligned/",
+    "bamstats" : "../../bamstats/",
+    "featureCounts" : "../../featureCounts/",
+    "kallisto" : "../../kallisto/",
+
+
+    "Comment_Reference" : "This section specifies the location of the Sus scrofa, Ensembl reference genome",
+    "Sscrofa.Ymasked.fa" : "/research/labs/neurology/fryer/projects/references/pig/ensembl_v7/Sus_scrofa.Sscrofa11.1.dna.toplevel.Ymask",
+    "Scrofa.cdna.Ymasked.fa" : "/research/labs/neurology/fryer/projects/references/pig/ensembl_v7/Sus_scrofa.Sscrofa11.1.cdna.all.Ymask",
+    "Sscrofa.fa" : "/research/labs/neurology/fryer/projects/references/pig/ensembl_v7/Sscrofa11.1.dna.toplevel",
+    "Sscrofa.gtf" : "/research/labs/neurology/fryer/projects/references/pig/ensembl_v7/Sus_scrofa.Sscrofa11.1.107",
+    "star_ref_index" : "/research/labs/neurology/fryer/projects/references/pig/ensembl_v7/Sus_scrofa.Sscrofa11.1.dna.toplevel_star_Ymask",
+    "kallisto_ref_index" : "/research/labs/neurology/fryer/projects/references/pig/ensembl_v7/Sus_scrofa.Sscrofa11.1.cdna.all.Ymask.kallisto",
+
+    "Comment_Sample_Info": "The following section lists the samples that are to be analyzed",
+    "sample_names": ['E1_BR_L1', 'E1_BR_L2', 'E1_KID_L1', 'E1_KID_L2', 'E2_BR_L1', 'E2_BR_L2', 'E2_KID_L1', 'E2_KID_L2', 'E3_BR_L1', 'E3_BR_L2', 'E3_KID_L1', 'E3_KID_L2', 'E4_BR_L1', 'E4_BR_L2', 'E4_KID_L1', 'E4_KID_L2', 'E5_BR_L1', 'E5_BR_L2', 'E5_KID_L1', 'E5_KID_L2', 'E6_BR_L1', 'E6_BR_L2', 'E6_KID_L1', 'E6_KID_L2', 'E7_BR_L1', 'E7_BR_L2', 'E7_KID_L1', 'E7_KID_L2', 'E8_BR_L1', 'E8_BR_L2', 'E8_KID_L1', 'E8_KID_L2', 'S1_BR_L1', 'S1_BR_L2', 'S1_KID_L1', 'S1_KID_L2', 'S2_BR_L1', 'S2_BR_L2', 'S2_KID_L1', 'S2_KID_L2', 'S3_BR_L1', 'S3_BR_L2', 'S3_KID_L1', 'S3_KID_L2', 'S4_BR_L1', 'S4_BR_L2', 'S4_KID_L1', 'S4_KID_L2', 'S5_BR_L1', 'S5_BR_L2', 'S5_KID_L1', 'S5_KID_L2', 'S6_BR_L1', 'S6_BR_L2', 'S6_KID_L1', 'S6_KID_L2'],
+    "brain_names": [],
+    "kidney_names": [],
+    "blood_names": [],
+    "read": ['R1', 'R2'],
+
+    "E1_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E1_BR.FCHVC2VDRXY_L1_R1_ITAAGTGGT-CTTAAGCC",
+        "fq2": "E1_BR.FCHVC2VDRXY_L1_R2_ITAAGTGGT-CTTAAGCC",
+        "shortName1": "E1_BR_L1_R1",
+        "shortName2": "E1_BR_L1_R2",
+        "ID": "E1_BR_L1",
+        "SM": "E1_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E1_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "E1_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E1_BR.FCHVC2VDRXY_L2_R1_ITAAGTGGT-CTTAAGCC",
+        "fq2": "E1_BR.FCHVC2VDRXY_L2_R2_ITAAGTGGT-CTTAAGCC",
+        "shortName1": "E1_BR_L2_R1",
+        "shortName2": "E1_BR_L2_R2",
+        "ID": "E1_BR_L2",
+        "SM": "E1_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E1_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "E1_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E1_KID.FCHVC2VDRXY_L1_R1_ICGGACAAC-TCCGGATT",
+        "fq2": "E1_KID.FCHVC2VDRXY_L1_R2_ICGGACAAC-TCCGGATT",
+        "shortName1": "E1_KID_L1_R1",
+        "shortName2": "E1_KID_L1_R2",
+        "ID": "E1_KID_L1",
+        "SM": "E1_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E1_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "E1_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E1_KID.FCHVC2VDRXY_L2_R1_ICGGACAAC-TCCGGATT",
+        "fq2": "E1_KID.FCHVC2VDRXY_L2_R2_ICGGACAAC-TCCGGATT",
+        "shortName1": "E1_KID_L2_R1",
+        "shortName2": "E1_KID_L2_R2",
+        "ID": "E1_KID_L2",
+        "SM": "E1_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E1_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "E2_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E2_BR.FCHVC2VDRXY_L1_R1_IATATGGAT-CTGTATTA",
+        "fq2": "E2_BR.FCHVC2VDRXY_L1_R2_IATATGGAT-CTGTATTA",
+        "shortName1": "E2_BR_L1_R1",
+        "shortName2": "E2_BR_L1_R2",
+        "ID": "E2_BR_L1",
+        "SM": "E2_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E2_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "E2_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E2_BR.FCHVC2VDRXY_L2_R1_IATATGGAT-CTGTATTA",
+        "fq2": "E2_BR.FCHVC2VDRXY_L2_R2_IATATGGAT-CTGTATTA",
+        "shortName1": "E2_BR_L2_R1",
+        "shortName2": "E2_BR_L2_R2",
+        "ID": "E2_BR_L2",
+        "SM": "E2_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E2_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "E2_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E2_KID.FCHVC2VDRXY_L1_R1_IGCGCAAGC-TCACGCCG",
+        "fq2": "E2_KID.FCHVC2VDRXY_L1_R2_IGCGCAAGC-TCACGCCG",
+        "shortName1": "E2_KID_L1_R1",
+        "shortName2": "E2_KID_L1_R2",
+        "ID": "E2_KID_L1",
+        "SM": "E2_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E2_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "E2_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E2_KID.FCHVC2VDRXY_L2_R1_IGCGCAAGC-TCACGCCG",
+        "fq2": "E2_KID.FCHVC2VDRXY_L2_R2_IGCGCAAGC-TCACGCCG",
+        "shortName1": "E2_KID_L2_R1",
+        "shortName2": "E2_KID_L2_R2",
+        "ID": "E2_KID_L2",
+        "SM": "E2_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E2_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "E3_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E3_BR.FCHVC2VDRXY_L1_R1_IAAGATACT-ACTTACAT",
+        "fq2": "E3_BR.FCHVC2VDRXY_L1_R2_IAAGATACT-ACTTACAT",
+        "shortName1": "E3_BR_L1_R1",
+        "shortName2": "E3_BR_L1_R2",
+        "ID": "E3_BR_L1",
+        "SM": "E3_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E3_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "E3_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E3_BR.FCHVC2VDRXY_L2_R1_IAAGATACT-ACTTACAT",
+        "fq2": "E3_BR.FCHVC2VDRXY_L2_R2_IAAGATACT-ACTTACAT",
+        "shortName1": "E3_BR_L2_R1",
+        "shortName2": "E3_BR_L2_R2",
+        "ID": "E3_BR_L2",
+        "SM": "E3_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E3_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "E3_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E3_KID.FCHVC2VDRXY_L1_R1_IGGAGCGTC-GTCCGTGC",
+        "fq2": "E3_KID.FCHVC2VDRXY_L1_R2_IGGAGCGTC-GTCCGTGC",
+        "shortName1": "E3_KID_L1_R1",
+        "shortName2": "E3_KID_L1_R2",
+        "ID": "E3_KID_L1",
+        "SM": "E3_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E3_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "E3_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E3_KID.FCHVC2VDRXY_L2_R1_IGGAGCGTC-GTCCGTGC",
+        "fq2": "E3_KID.FCHVC2VDRXY_L2_R2_IGGAGCGTC-GTCCGTGC",
+        "shortName1": "E3_KID_L2_R1",
+        "shortName2": "E3_KID_L2_R2",
+        "ID": "E3_KID_L2",
+        "SM": "E3_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E3_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "E4_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E4_BR.FCHVC2VDRXY_L1_R1_IATGGCATG-AAGGTACC",
+        "fq2": "E4_BR.FCHVC2VDRXY_L1_R2_IATGGCATG-AAGGTACC",
+        "shortName1": "E4_BR_L1_R1",
+        "shortName2": "E4_BR_L1_R2",
+        "ID": "E4_BR_L1",
+        "SM": "E4_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E4_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "E4_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E4_BR.FCHVC2VDRXY_L2_R1_IATGGCATG-AAGGTACC",
+        "fq2": "E4_BR.FCHVC2VDRXY_L2_R2_IATGGCATG-AAGGTACC",
+        "shortName1": "E4_BR_L2_R1",
+        "shortName2": "E4_BR_L2_R2",
+        "ID": "E4_BR_L2",
+        "SM": "E4_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E4_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "E4_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E4_KID.FCHVC2VDRXY_L1_R1_IGCAATGCA-GGAACGTT",
+        "fq2": "E4_KID.FCHVC2VDRXY_L1_R2_IGCAATGCA-GGAACGTT",
+        "shortName1": "E4_KID_L1_R1",
+        "shortName2": "E4_KID_L1_R2",
+        "ID": "E4_KID_L1",
+        "SM": "E4_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E4_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "E4_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E4_KID.FCHVC2VDRXY_L2_R1_IGCAATGCA-GGAACGTT",
+        "fq2": "E4_KID.FCHVC2VDRXY_L2_R2_IGCAATGCA-GGAACGTT",
+        "shortName1": "E4_KID_L2_R1",
+        "shortName2": "E4_KID_L2_R2",
+        "ID": "E4_KID_L2",
+        "SM": "E4_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E4_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "E5_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E5_BR.FCHVC2VDRXY_L1_R1_IGTTCCAAT-AATTCTGC",
+        "fq2": "E5_BR.FCHVC2VDRXY_L1_R2_IGTTCCAAT-AATTCTGC",
+        "shortName1": "E5_BR_L1_R1",
+        "shortName2": "E5_BR_L1_R2",
+        "ID": "E5_BR_L1",
+        "SM": "E5_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E5_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "E5_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E5_BR.FCHVC2VDRXY_L2_R1_IGTTCCAAT-AATTCTGC",
+        "fq2": "E5_BR.FCHVC2VDRXY_L2_R2_IGTTCCAAT-AATTCTGC",
+        "shortName1": "E5_BR_L2_R1",
+        "shortName2": "E5_BR_L2_R2",
+        "ID": "E5_BR_L2",
+        "SM": "E5_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E5_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "E5_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E5_KID.FCHVC2VDRXY_L1_R1_IACCTTGGC-GGCCTCAT",
+        "fq2": "E5_KID.FCHVC2VDRXY_L1_R2_IACCTTGGC-GGCCTCAT",
+        "shortName1": "E5_KID_L1_R1",
+        "shortName2": "E5_KID_L1_R2",
+        "ID": "E5_KID_L1",
+        "SM": "E5_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E5_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "E5_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E5_KID.FCHVC2VDRXY_L2_R1_IACCTTGGC-GGCCTCAT",
+        "fq2": "E5_KID.FCHVC2VDRXY_L2_R2_IACCTTGGC-GGCCTCAT",
+        "shortName1": "E5_KID_L2_R1",
+        "shortName2": "E5_KID_L2_R2",
+        "ID": "E5_KID_L2",
+        "SM": "E5_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E5_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "E6_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E6_BR.FCHVC2VDRXY_L1_R1_IATATCTCG-ATCTTAGT",
+        "fq2": "E6_BR.FCHVC2VDRXY_L1_R2_IATATCTCG-ATCTTAGT",
+        "shortName1": "E6_BR_L1_R1",
+        "shortName2": "E6_BR_L1_R2",
+        "ID": "E6_BR_L1",
+        "SM": "E6_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E6_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "E6_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E6_BR.FCHVC2VDRXY_L2_R1_IATATCTCG-ATCTTAGT",
+        "fq2": "E6_BR.FCHVC2VDRXY_L2_R2_IATATCTCG-ATCTTAGT",
+        "shortName1": "E6_BR_L2_R1",
+        "shortName2": "E6_BR_L2_R2",
+        "ID": "E6_BR_L2",
+        "SM": "E6_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E6_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "E6_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E6_KID.FCHVC2VDRXY_L1_R1_IGCGCTCTA-GCTCCGAC",
+        "fq2": "E6_KID.FCHVC2VDRXY_L1_R2_IGCGCTCTA-GCTCCGAC",
+        "shortName1": "E6_KID_L1_R1",
+        "shortName2": "E6_KID_L1_R2",
+        "ID": "E6_KID_L1",
+        "SM": "E6_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E6_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "E6_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E6_KID.FCHVC2VDRXY_L2_R1_IGCGCTCTA-GCTCCGAC",
+        "fq2": "E6_KID.FCHVC2VDRXY_L2_R2_IGCGCTCTA-GCTCCGAC",
+        "shortName1": "E6_KID_L2_R1",
+        "shortName2": "E6_KID_L2_R2",
+        "ID": "E6_KID_L2",
+        "SM": "E6_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E6_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "E7_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E7_BR.FCHVC2VDRXY_L1_R1_IAACAGGTT-ATACCAAG",
+        "fq2": "E7_BR.FCHVC2VDRXY_L1_R2_IAACAGGTT-ATACCAAG",
+        "shortName1": "E7_BR_L1_R1",
+        "shortName2": "E7_BR_L1_R2",
+        "ID": "E7_BR_L1",
+        "SM": "E7_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E7_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "E7_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E7_BR.FCHVC2VDRXY_L2_R1_IAACAGGTT-ATACCAAG",
+        "fq2": "E7_BR.FCHVC2VDRXY_L2_R2_IAACAGGTT-ATACCAAG",
+        "shortName1": "E7_BR_L2_R1",
+        "shortName2": "E7_BR_L2_R2",
+        "ID": "E7_BR_L2",
+        "SM": "E7_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E7_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "E7_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E7_KID.FCHVC2VDRXY_L1_R1_IGGTGAACC-GCGTTGGA",
+        "fq2": "E7_KID.FCHVC2VDRXY_L1_R2_IGGTGAACC-GCGTTGGA",
+        "shortName1": "E7_KID_L1_R1",
+        "shortName2": "E7_KID_L1_R2",
+        "ID": "E7_KID_L1",
+        "SM": "E7_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E7_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "E7_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E7_KID.FCHVC2VDRXY_L2_R1_IGGTGAACC-GCGTTGGA",
+        "fq2": "E7_KID.FCHVC2VDRXY_L2_R2_IGGTGAACC-GCGTTGGA",
+        "shortName1": "E7_KID_L2_R1",
+        "shortName2": "E7_KID_L2_R2",
+        "ID": "E7_KID_L2",
+        "SM": "E7_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E7_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "E8_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E8_BR.FCHVC2VDRXY_L1_R1_ICAACAATG-CTTCACGG",
+        "fq2": "E8_BR.FCHVC2VDRXY_L1_R2_ICAACAATG-CTTCACGG",
+        "shortName1": "E8_BR_L1_R1",
+        "shortName2": "E8_BR_L1_R2",
+        "ID": "E8_BR_L1",
+        "SM": "E8_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E8_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "E8_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E8_BR.FCHVC2VDRXY_L2_R1_ICAACAATG-CTTCACGG",
+        "fq2": "E8_BR.FCHVC2VDRXY_L2_R2_ICAACAATG-CTTCACGG",
+        "shortName1": "E8_BR_L2_R1",
+        "shortName2": "E8_BR_L2_R2",
+        "ID": "E8_BR_L2",
+        "SM": "E8_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E8_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "E8_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E8_KID.FCHVC2VDRXY_L1_R1_ITGGTGGCA-TCCTGTAA",
+        "fq2": "E8_KID.FCHVC2VDRXY_L1_R2_ITGGTGGCA-TCCTGTAA",
+        "shortName1": "E8_KID_L1_R1",
+        "shortName2": "E8_KID_L1_R2",
+        "ID": "E8_KID_L1",
+        "SM": "E8_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "E8_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "E8_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "E8_KID.FCHVC2VDRXY_L2_R1_ITGGTGGCA-TCCTGTAA",
+        "fq2": "E8_KID.FCHVC2VDRXY_L2_R2_ITGGTGGCA-TCCTGTAA",
+        "shortName1": "E8_KID_L2_R1",
+        "shortName2": "E8_KID_L2_R2",
+        "ID": "E8_KID_L2",
+        "SM": "E8_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "E8_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "S1_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S1_BR.FCHVC2VDRXY_L1_R1_ICTTGGTAT-CCAAGTCC",
+        "fq2": "S1_BR.FCHVC2VDRXY_L1_R2_ICTTGGTAT-CCAAGTCC",
+        "shortName1": "S1_BR_L1_R1",
+        "shortName2": "S1_BR_L1_R2",
+        "ID": "S1_BR_L1",
+        "SM": "S1_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S1_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "S1_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S1_BR.FCHVC2VDRXY_L2_R1_ICTTGGTAT-CCAAGTCC",
+        "fq2": "S1_BR.FCHVC2VDRXY_L2_R2_ICTTGGTAT-CCAAGTCC",
+        "shortName1": "S1_BR_L2_R1",
+        "shortName2": "S1_BR_L2_R2",
+        "ID": "S1_BR_L2",
+        "SM": "S1_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S1_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "S1_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S1_KID.FCHVC2VDRXY_L1_R1_ITCCAACGC-TTGGACTT",
+        "fq2": "S1_KID.FCHVC2VDRXY_L1_R2_ITCCAACGC-TTGGACTT",
+        "shortName1": "S1_KID_L1_R1",
+        "shortName2": "S1_KID_L1_R2",
+        "ID": "S1_KID_L1",
+        "SM": "S1_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S1_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "S1_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S1_KID.FCHVC2VDRXY_L2_R1_ITCCAACGC-TTGGACTT",
+        "fq2": "S1_KID.FCHVC2VDRXY_L2_R2_ITCCAACGC-TTGGACTT",
+        "shortName1": "S1_KID_L2_R1",
+        "shortName2": "S1_KID_L2_R2",
+        "ID": "S1_KID_L2",
+        "SM": "S1_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S1_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "S2_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S2_BR.FCHVC2VDRXY_L1_R1_ICCGTGAAG-CAGTGGAT",
+        "fq2": "S2_BR.FCHVC2VDRXY_L1_R2_ICCGTGAAG-CAGTGGAT",
+        "shortName1": "S2_BR_L1_R1",
+        "shortName2": "S2_BR_L1_R2",
+        "ID": "S2_BR_L1",
+        "SM": "S2_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S2_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "S2_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S2_BR.FCHVC2VDRXY_L2_R1_ICCGTGAAG-CAGTGGAT",
+        "fq2": "S2_BR.FCHVC2VDRXY_L2_R2_ICCGTGAAG-CAGTGGAT",
+        "shortName1": "S2_BR_L2_R1",
+        "shortName2": "S2_BR_L2_R2",
+        "ID": "S2_BR_L2",
+        "SM": "S2_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S2_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "S2_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S2_KID.FCHVC2VDRXY_L1_R1_ITTACAGGA-TGACAAGC",
+        "fq2": "S2_KID.FCHVC2VDRXY_L1_R2_ITTACAGGA-TGACAAGC",
+        "shortName1": "S2_KID_L1_R1",
+        "shortName2": "S2_KID_L1_R2",
+        "ID": "S2_KID_L1",
+        "SM": "S2_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S2_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "S2_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S2_KID.FCHVC2VDRXY_L2_R1_ITTACAGGA-TGACAAGC",
+        "fq2": "S2_KID.FCHVC2VDRXY_L2_R2_ITTACAGGA-TGACAAGC",
+        "shortName1": "S2_KID_L2_R1",
+        "shortName2": "S2_KID_L2_R2",
+        "ID": "S2_KID_L2",
+        "SM": "S2_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S2_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "S3_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S3_BR.FCHVC2VDRXY_L1_R1_IGGCATTCT-CTAGCTTG",
+        "fq2": "S3_BR.FCHVC2VDRXY_L1_R2_IGGCATTCT-CTAGCTTG",
+        "shortName1": "S3_BR_L1_R1",
+        "shortName2": "S3_BR_L1_R2",
+        "ID": "S3_BR_L1",
+        "SM": "S3_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S3_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "S3_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S3_BR.FCHVC2VDRXY_L2_R1_IGGCATTCT-CTAGCTTG",
+        "fq2": "S3_BR.FCHVC2VDRXY_L2_R2_IGGCATTCT-CTAGCTTG",
+        "shortName1": "S3_BR_L2_R1",
+        "shortName2": "S3_BR_L2_R2",
+        "ID": "S3_BR_L2",
+        "SM": "S3_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S3_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "S3_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S3_KID.FCHVC2VDRXY_L1_R1_IAATGCCTC-TCGATCCA",
+        "fq2": "S3_KID.FCHVC2VDRXY_L1_R2_IAATGCCTC-TCGATCCA",
+        "shortName1": "S3_KID_L1_R1",
+        "shortName2": "S3_KID_L1_R2",
+        "ID": "S3_KID_L1",
+        "SM": "S3_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S3_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "S3_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S3_KID.FCHVC2VDRXY_L2_R1_IAATGCCTC-TCGATCCA",
+        "fq2": "S3_KID.FCHVC2VDRXY_L2_R2_IAATGCCTC-TCGATCCA",
+        "shortName1": "S3_KID_L2_R1",
+        "shortName2": "S3_KID_L2_R2",
+        "ID": "S3_KID_L2",
+        "SM": "S3_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S3_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "S4_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S4_BR.FCHVC2VDRXY_L1_R1_ITACCGAGG-CCTGAACT",
+        "fq2": "S4_BR.FCHVC2VDRXY_L1_R2_ITACCGAGG-CCTGAACT",
+        "shortName1": "S4_BR_L1_R1",
+        "shortName2": "S4_BR_L1_R2",
+        "ID": "S4_BR_L1",
+        "SM": "S4_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S4_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "S4_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S4_BR.FCHVC2VDRXY_L2_R1_ITACCGAGG-CCTGAACT",
+        "fq2": "S4_BR.FCHVC2VDRXY_L2_R2_ITACCGAGG-CCTGAACT",
+        "shortName1": "S4_BR_L2_R1",
+        "shortName2": "S4_BR_L2_R2",
+        "ID": "S4_BR_L2",
+        "SM": "S4_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S4_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "S4_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S4_KID.FCHVC2VDRXY_L1_R1_ICGTTAGAA-TTCAGGTC",
+        "fq2": "S4_KID.FCHVC2VDRXY_L1_R2_ICGTTAGAA-TTCAGGTC",
+        "shortName1": "S4_KID_L1_R1",
+        "shortName2": "S4_KID_L1_R2",
+        "ID": "S4_KID_L1",
+        "SM": "S4_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S4_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "S4_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S4_KID.FCHVC2VDRXY_L2_R1_ICGTTAGAA-TTCAGGTC",
+        "fq2": "S4_KID.FCHVC2VDRXY_L2_R2_ICGTTAGAA-TTCAGGTC",
+        "shortName1": "S4_KID_L2_R1",
+        "shortName2": "S4_KID_L2_R2",
+        "ID": "S4_KID_L2",
+        "SM": "S4_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S4_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "S5_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S5_BR.FCHVC2VDRXY_L1_R1_IAGCCTCAT-AGTAGAGA",
+        "fq2": "S5_BR.FCHVC2VDRXY_L1_R2_IAGCCTCAT-AGTAGAGA",
+        "shortName1": "S5_BR_L1_R1",
+        "shortName2": "S5_BR_L1_R2",
+        "ID": "S5_BR_L1",
+        "SM": "S5_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S5_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "S5_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S5_BR.FCHVC2VDRXY_L2_R1_IAGCCTCAT-AGTAGAGA",
+        "fq2": "S5_BR.FCHVC2VDRXY_L2_R2_IAGCCTCAT-AGTAGAGA",
+        "shortName1": "S5_BR_L2_R1",
+        "shortName2": "S5_BR_L2_R2",
+        "ID": "S5_BR_L2",
+        "SM": "S5_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S5_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "S5_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S5_KID.FCHVC2VDRXY_L1_R1_IGATTCTGC-GACGAGAG",
+        "fq2": "S5_KID.FCHVC2VDRXY_L1_R2_IGATTCTGC-GACGAGAG",
+        "shortName1": "S5_KID_L1_R1",
+        "shortName2": "S5_KID_L1_R2",
+        "ID": "S5_KID_L1",
+        "SM": "S5_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S5_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "S5_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S5_KID.FCHVC2VDRXY_L2_R1_IGATTCTGC-GACGAGAG",
+        "fq2": "S5_KID.FCHVC2VDRXY_L2_R2_IGATTCTGC-GACGAGAG",
+        "shortName1": "S5_KID_L2_R1",
+        "shortName2": "S5_KID_L2_R2",
+        "ID": "S5_KID_L2",
+        "SM": "S5_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S5_KID_L2",
+        "PL": "Illumina"
+        },
+
+    "S6_BR_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S6_BR.FCHVC2VDRXY_L1_R1_ITCGTAGTG-AGACTTGG",
+        "fq2": "S6_BR.FCHVC2VDRXY_L1_R2_ITCGTAGTG-AGACTTGG",
+        "shortName1": "S6_BR_L1_R1",
+        "shortName2": "S6_BR_L1_R2",
+        "ID": "S6_BR_L1",
+        "SM": "S6_BR_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S6_BR_L1",
+        "PL": "Illumina"
+        },
+
+    "S6_BR_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S6_BR.FCHVC2VDRXY_L2_R1_ITCGTAGTG-AGACTTGG",
+        "fq2": "S6_BR.FCHVC2VDRXY_L2_R2_ITCGTAGTG-AGACTTGG",
+        "shortName1": "S6_BR_L2_R1",
+        "shortName2": "S6_BR_L2_R2",
+        "ID": "S6_BR_L2",
+        "SM": "S6_BR_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S6_BR_L2",
+        "PL": "Illumina"
+        },
+
+    "S6_KID_L1":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S6_KID.FCHVC2VDRXY_L1_R1_ICTACGACA-GAGTCCAA",
+        "fq2": "S6_KID.FCHVC2VDRXY_L1_R2_ICTACGACA-GAGTCCAA",
+        "shortName1": "S6_KID_L1_R1",
+        "shortName2": "S6_KID_L1_R2",
+        "ID": "S6_KID_L1",
+        "SM": "S6_KID_L1",
+        "PU": "HVC2VDRXY.1",
+        "LB": "S6_KID_L1",
+        "PL": "Illumina"
+        },
+
+    "S6_KID_L2":{
+        "fq_path": "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/bulkRNA/high_dose_batch2/",
+        "fq1": "S6_KID.FCHVC2VDRXY_L2_R1_ICTACGACA-GAGTCCAA",
+        "fq2": "S6_KID.FCHVC2VDRXY_L2_R2_ICTACGACA-GAGTCCAA",
+        "shortName1": "S6_KID_L2_R1",
+        "shortName2": "S6_KID_L2_R2",
+        "ID": "S6_KID_L2",
+        "SM": "S6_KID_L2",
+        "PU": "HVC2VDRXY.2",
+        "LB": "S6_KID_L2",
+        "PL": "Illumina"
+        }
+}
