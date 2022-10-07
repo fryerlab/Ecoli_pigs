@@ -26,11 +26,11 @@ rule all:
         	expand(config["trimmedQC"]+"{sample}_trimmed_fq2_fastqc.html", sample = config["sample_names"]),
         	
         	expand(config["starAligned"]+"{sample}_STAR.bam", sample = config["sample_names"]),
-        	expand(config["starAligned"]+"{sample}_STAR_sort.bam", sample = config["sample_names"]),    	
-        	expand(config["starAligned"]+"{sample}_STAR_sort_mkdup.bam", sample = config["sample_names"]),   	
-        	expand(config["starAligned"]+"{sample}_STAR_sort_mkdup_rdgrp.bam", sample = config["sample_names"]),   	
-        	expand(config["starAligned"]+"{sample}_STAR_sort_mkdup_rdgrp.bam.bai", sample = config["sample_names"]),  	
-        	expand(config["bamstats"]+"{sample}_STAR_sort_mkdup_rdgrp_stats.txt", sample = config["sample_names"]),
+        	#expand(config["starAligned"]+"{sample}_STAR_sort.bam", sample = config["sample_names"]),    	
+        	#expand(config["starAligned"]+"{sample}_STAR_sort_mkdup.bam", sample = config["sample_names"]),   	
+        	#expand(config["starAligned"]+"{sample}_STAR_sort_mkdup_rdgrp.bam", sample = config["sample_names"]),   	
+        	#expand(config["starAligned"]+"{sample}_STAR_sort_mkdup_rdgrp.bam.bai", sample = config["sample_names"]),  	
+        	#expand(config["bamstats"]+"{sample}_STAR_sort_mkdup_rdgrp_stats.txt", sample = config["sample_names"]),
         	#expand(config["starAligned"]+"{sample}_gene_id_counts.txt", sample = config["sample_names"]),
         	
         	expand(config["kallisto"]+"{sample}", sample = config["sample_names"])
