@@ -1,0 +1,955 @@
+---
+title: "Differential expression Ecoli high dose pigs"
+author: "Kimberly Olney"
+date: "11/29/2022"
+output:
+  pdf_document: default
+---
+
+# Set up working enivornment
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = ".")
+```
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(BiocParallel) 
+library(edgeR)  
+library(limma)  
+library(ggrepel) 
+library(ggplot2) 
+library(gplots) 
+library(grDevices)  
+library(philentropy) 
+library(stringr) 
+library(variancePartition) 
+library(tximport)
+library(tidyverse)
+library(GenomicFeatures)
+library(tximportData)
+library(wasabi)
+library(sleuth)
+library(dplyr)
+library(plyr)
+library(gridExtra)
+library(grid)
+library(lattice)
+library(data.table)
+```
+
+# User defined variables
+```{r set_variables}
+tissue <- c("Brain") # Kidney or Brain
+control <- "Saline"
+treatment <- "Ecoli"
+control_color <- "gray29"
+treatment_color <- "green"
+myContrasts <- c("Ecoli - Saline")
+dose <- "low"
+excluded_pigs <- c("S4", "S5")
+tool <- c("star_low_dose_exclude_S4_S5") 
+typeOfCount <- c("STAR.bamReadsPerGene.out.tab") 
+pathToRef <- c("/research/labs/neurology/fryer/projects/references/pig/ensembl_v7/")
+```
+
+# Save functions
+These functions with help simultaneously save plots as a pdf.
+```{r warning=FALSE}
+saveToPDF <- function(...) {
+    d = dev.copy(pdf,...)
+    dev.off(d)
+}
+```
+
+# Read data
+```{r read_data}
+# read in metadata
+metadata <-
+  read.delim((
+    "/research/labs/neurology/fryer/projects/sepsis/pig/Ecoli/metadata.tsv"
+  ),
+  header = TRUE,
+  sep = "\t"
+  )
+metadata <- metadata[ -c(1)] # remove first column 
+metadata$sample_name <- gsub("\\..*", "", metadata$filename) # create sample_name column
+# create lane column 
+lane <- str_sub(metadata$run_flowcell_lane,start=-1) 
+metadata$lane <- paste0("L", lane)
+metadata <- metadata[metadata$tissue == tissue, ]
+metadata <- metadata[metadata$dose == dose, ]
+metadata <- metadata[ ! metadata$pig_id %in% excluded_pigs, ]
+
+# path to counts files
+count_files <-
+  file.path(paste0(
+    "../../starAligned/",
+    metadata$sample_name,
+    "_", metadata$lane, "_",
+    typeOfCount
+  ))
+# add sample name to counts files
+names(count_files) <- paste0(metadata$sample)
+
+
+# sleuth and other tools requires path, sample and condition columns.
+# add this information to metadata
+metadata$path <- count_files
+metadata$sample <- metadata$pig_id
+metadata$condition <- as.factor(metadata$group)
+
+# create a counts matrix 
+countData <- data.frame(fread(count_files[1]))[c(1,2)]
+# Loop and read the 2nd column remaining files
+for(i in 2:length(count_files)) {
+        countData <- cbind(countData, data.frame(fread(count_files[i]))[2])
+}
+# set gene_id as the row name
+row.names(countData) <- countData$gene_id
+countData$gene_id <- NULL
+counts_matrix <- as.matrix(countData)
+```
+
+# Read in annotation file
+```{r}
+gtf.file <- paste0(pathToRef, "Sus_scrofa.Sscrofa11.1.107.gtf")
+gtf.gr <- rtracklayer::import(gtf.file)
+# save gtf as data frame
+gtf.df <- as.data.frame(gtf.gr)
+# get gene id, transcript id, gene name, seqname which is chromosome, and biotype from gtf
+genes <-
+  gtf.df[, c("seqnames",
+             "width",
+             "gene_id",
+             "gene_name",
+             "gene_biotype",
+             "type")]
+# Up date naming these columns using the correct column information.
+names(genes)[names(genes) == "seqnames"] <- "Chr"
+names(genes)[names(genes) == "lenght"] <- "width"
+# keep gene_id to merge with counts data
+genes$GENEID <- genes$gene_id
+genes <- subset(genes, type == "gene")
+protein_coding_genes <- subset(genes, genes$gene_biotype == "protein_coding")
+  path <-
+    paste(
+      "../../results/",
+      tool,
+      "/v7_ensembl_protein_coding_genes.txt",
+      sep = ""
+    )
+protein_coding_genes <- protein_coding_genes %>% mutate(gene_name = coalesce(gene_name,gene_id))
+saveRDS(protein_coding_genes$gene_name, file = paste0("../../rObjects/gene_options.rds"))
+
+  write.table(
+    protein_coding_genes,
+    path,
+    sep = "\t",
+    row.names = FALSE,
+    quote = FALSE
+  )
+# make tx2gene
+txdb <-
+  makeTxDbFromGFF(paste0(pathToRef, "Sus_scrofa.Sscrofa11.1.107.gtf"), format = "gtf")
+txdb_keys <- keys(txdb, keytype = "TXNAME")
+keytypes(txdb) # list of the different key types
+tx2gene <-
+  AnnotationDbi::select(txdb, txdb_keys, "GENEID", "TXNAME")
+```
+# Star mapping metrics
+```{r}
+star_metrics <- data.frame(countData[countData$V1 %like% "N_", ])
+star_metrics$V1 <- as.vector(star_metrics$V1)
+melt_star_metrics <- reshape::melt(star_metrics, id = c("V1"))
+ggplot(melt_star_metrics, aes(x = value, fill = V1)) + 
+  geom_histogram(position = "identity", bins = 100) + 
+  facet_grid(V1 ~ .)  + theme_bw()
+```
+clean up
+```{r}
+# clean up
+remove(melt_star_metrics, 
+       star_metrics)
+```
+# format counts table
+```{r}
+# remove star metric information
+countData <- countData[!grepl("N_", countData$V1),]
+# set gene_id (i.e. V1) as the row name
+row.names(countData) <- countData$V1
+countData$V1 <- NULL
+# set column names to NPID sample ID
+colnames(countData) <- metadata$sample
+```
+
+# Check inputs
+```{r}
+all.equal(rownames(countData), genes$gene_id)
+all.equal(colnames(countData), (metadata$sample))
+```
+
+# Prepare DGE object
+# Create DGE object
+```{r DGE_object}
+# create object
+dge <- DGEList(counts = countData,
+               samples = metadata,
+               genes = genes)
+
+table(dge$samples$condition)
+```
+
+# Save object
+```{r}
+saveRDS(dge, file = paste0("../../rObjects/", treatment, "_", tool, "_",
+                           tolower(tissue),
+                           "_gene_raw.rds"))
+```
+# Remove mitochondrial genes
+```{r MT_genes}
+dim(dge)
+removeMT <- dge$genes$Chr != "MT"  # true when NOT MT
+dge <- dge[removeMT,,keep.lib.sizes = FALSE]
+dim(dge)
+```
+# Keep protein coding genes only
+```{r MT_genes}
+dim(dge)
+removeMT <- dge$genes$gene_biotype == "protein_coding"  # true when NOT MT
+dge <- dge[removeMT,,keep.lib.sizes = FALSE]
+dim(dge)
+```
+# JSD heatmap
+This portion won't display in the R Markdown pdf; the margins are too large.
+The pdf and png file can only be saved one at a time.
+```{r JSD, warning = FALSE, eval=FALSE}
+# save
+path <- paste0("../../results/", tool, "/JSD/", treatment, "_",tolower(tissue),"_gene_JSD_raw")
+pdf(paste0(path,".pdf"), width = 12, height = 10)
+
+# set heatmap colors and names
+colors <- c("blue","skyblue","white") # set heatmap color scale
+colors <- colorRampPalette(colors)(100) # make it a gradient
+sample_group_color <- c(treatment_color, control_color)[dge$samples$group]
+names <- paste(dge$samples$sample,
+               dge$samples$lane,
+               sep = "_")
+
+# find JSD
+data <- JSD(t(edgeR::cpm(dge$counts)), est.prob = "empirical")
+colnames(data) <- names
+rownames(data) <- names
+round.data <- round(data, digits = 2) # round 3 decimal places
+
+# plot heatmap
+heatmap <- heatmap.2(
+  round.data,
+  trace = "none",
+  colCol = sample_group_color,
+  colRow = sample_group_color,
+  symm = TRUE,
+  col = colors,
+  cellnote = round.data,
+  notecex = 1,
+  dendrogram = "none",
+  notecol = "black",
+  key.title = "Color Key",
+  srtCol = 65,
+  margins = c(12,12),
+  keysize = 0.2)
+```
+# Raw MDS with technical replicates
+```{r MDS_techreps, warning=FALSE}
+# set colors and get data
+group_colors <- c(treatment_color, control_color)[dge$samples$group]
+data <- edgeR::cpm(dge$counts, log = TRUE)
+par(bg = 'white')
+
+# plot MDS
+plotMDS(
+  data,
+  top = 100,
+  labels = dge$samples$sample,
+  cex = 1,
+  dim.plot = c(1, 2),
+  plot = TRUE,
+  col = group_colors
+)
+title(expression('Top 100 Genes - Raw (Log'[2] ~ 'CPM)'))
+
+# save
+path <-
+  paste0(
+    "../../results/",
+    tool,
+    "/MDS/",
+    treatment,
+    "_",
+    tolower(tissue),
+    "_gene_MDS_dim1&2_techreps"
+  )
+saveToPDF(paste0(path, ".pdf"), width = 6, height = 6)
+
+
+# plot MDS
+plotMDS(
+  data,
+  top = 100,
+  labels = dge$samples$sample,
+  cex = 1,
+  dim.plot = c(2, 3),
+  plot = TRUE,
+  col = group_colors
+)
+title(expression('Top 100 Genes - Raw (Log'[2] ~ 'CPM)'))
+
+# save
+path <-
+  paste0(
+    "../../results/",
+    tool,
+    "/MDS/",
+    treatment,
+    "_",
+    tolower(tissue),
+    "_gene_MDS_dim2&3_techreps"
+  )
+saveToPDF(paste0(path, ".pdf"), width = 6, height = 6)
+```
+# Sum technical replicates
+```{r techReps}
+# sum technical replicates
+dim(dge)
+dge.tech <- sumTechReps(dge, dge$samples$sample)
+dim(dge.tech$counts)
+colnames(dge.tech$counts) <- dge.tech$samples$sample
+```
+
+# Raw MDS
+```{r}
+# set colors and get data
+group_colors <-
+  c(treatment_color, control_color)[dge.tech$samples$group]
+data <- edgeR::cpm(dge.tech$counts, log = TRUE)
+
+par(bg = 'white')
+
+# plot MDS
+plotMDS(
+  data,
+  top = 100,
+  labels = dge.tech$samples$sample,
+  cex = 1,
+  dim.plot = c(1, 2),
+  plot = TRUE,
+  col = group_colors
+)
+title(expression('Top 100 Genes - Raw (Log'[2] ~ 'CPM)'))
+
+# save
+path <-
+  paste0("../../results/",
+         tool,
+         "/MDS/",
+         treatment,
+         "_",
+         tolower(tissue),
+         "_gene_MDS_dim1&2_raw")
+saveToPDF(paste0(path, ".pdf"), width = 6, height = 6)
+
+# plot MDS
+plotMDS(
+  data,
+  top = 100,
+  labels = paste0(dge.tech$samples$sample,".", dge.tech$samples$duration_min),
+  cex = 1,
+  dim.plot = c(1, 2),
+  plot = TRUE,
+  col = group_colors
+)
+title(expression('Top 100 Genes - Raw (Log'[2] ~ 'CPM)'))
+
+# save
+path <-
+  paste0(
+    "../../results/",
+    tool,
+    "/MDS/",
+    treatment,
+    "_",
+    tolower(tissue),
+    "_gene_MDS_dim1&2_sample&duration_raw"
+  )
+saveToPDF(paste0(path, ".pdf"), width = 6, height = 6)
+
+
+
+# plot MDS
+plotMDS(
+  data,
+  top = 100,
+  labels = paste0(dge.tech$samples$sample,".", dge.tech$samples$duration_min),
+  cex = 1,
+  dim.plot = c(2, 3),
+  plot = TRUE,
+  col = group_colors
+)
+title(expression('Top 100 Genes - Raw (Log'[2] ~ 'CPM)'))
+
+# save
+path <-
+  paste0(
+    "../../results/",
+    tool,
+    "/MDS/",
+    treatment,
+    "_",
+    tolower(tissue),
+    "_gene_MDS_dim2&3_sample&duration_raw"
+  )
+saveToPDF(paste0(path, ".pdf"), width = 6, height = 6)
+```
+# Filter lowly expressed genes
+The filterByExpr() function in the edgeR package determines which genes have a great enough count value to keep.\
+We will filter by group.\ 
+This means at least 4 samples (4 is the smallest group sample size) must express a minimum count of 10 (in cpm, default value).
+```{r filter}
+keep.expr <- filterByExpr(dge.tech, group = dge.tech$samples$group)
+dim(dge.tech)
+dge.filtered <- dge.tech[keep.expr, , keep.lib.sizes = FALSE]
+dim(dge.filtered)
+```
+
+# TMM normalization
+Now, normalization by the method of trimmed mean of M-values (TMM)
+```{r TMM_normalize}
+dge.filtered.norm <- calcNormFactors(dge.filtered, method = "TMM")
+
+# norm factor summary
+summary(dge.filtered.norm$samples$norm.factors)
+```
+# gene_id to gene_name
+Some of the gene_names are duplicated so we have the matrix row names by gene_id. Since we have now filtered and normalized we can check to see if 
+duplicated gene_names still exist.  If none do, rename columns.  If there are duplicates, handle the error and then rename columns.
+
+```{r}
+# check for duplication
+table(duplicated(dge.filtered.norm$genes$gene_name))
+
+# replace NA with gene_id 
+dge.filtered.norm$genes <- dge.filtered.norm$genes %>% mutate(gene_name = coalesce(gene_name,gene_id))
+
+# check for duplication
+table(duplicated(dge.filtered.norm$genes$gene_name))
+```
+# Density plot
+
+Density plots of log - intensity distribution of each library can be superposed
+on a single graph for a better comparison between libraries and for identification of libraries with weird distribution.
+```{r density_plots}
+# set graphical parameter
+par(mfrow = c(1, 3))
+
+# Normalize data for library size and expression intesntiy
+log2cpm.tech <- edgeR::cpm(dge.tech, log = TRUE)
+log2cpm.filtered <- edgeR::cpm(dge.filtered, log = TRUE)
+log2cpm.norm <- edgeR::cpm(dge.filtered.norm, log = TRUE)
+
+# set colors
+colors <- c(
+  "red",
+  "orange",
+  "green",
+  "yellow",
+  "blue",
+  "purple",
+  "lightgray",
+  "brown",
+  "pink",
+  "cyan"
+)
+nsamples <- ncol(dge.tech)
+
+# First, plot the first column of the log2cpm.tech density
+plot(
+  density(log2cpm.tech[, 1]),
+  col = colors[1],
+  lwd = 2,
+  ylim = c(0, 0.25),
+  las = 2,
+  main = "A. Raw",
+  xlab = expression('Log'[2] ~ CPM)
+)
+
+# For each sample plot the lcpm density
+for (i in 2:nsamples) {
+  den <- density(log2cpm.tech[, i]) #subset each column
+  lines(den$x, den$y, col = colors[i], lwd = 2)
+}
+
+
+# Second, plot log2cpm.filtered
+plot(
+  density(log2cpm.filtered[, 1]),
+  col = colors[1],
+  lwd = 2,
+  ylim = c(0, 0.25),
+  las = 2,
+  main = "B. Filtered",
+  xlab = expression('Log'[2] ~ CPM)
+)
+abline(v = edgeR::cpm(3, log = TRUE), lty = 3)
+for (i in 2:nsamples) {
+  den <- density(log2cpm.filtered[, i])
+  lines(den$x, den$y, col = colors[i], lwd = 2)
+}
+
+# Third, plot log2cpm.norm
+plot(
+  density(log2cpm.norm[, 1]),
+  col = colors[1],
+  lwd = 2,
+  ylim = c(0, 0.25),
+  las = 2,
+  main = "C. Normalized",
+  xlab = expression('Log'[2] ~ CPM)
+)
+abline(v = edgeR::cpm(3, log = TRUE), lty = 3)
+for (i in 2:nsamples) {
+  den <- density(log2cpm.norm[, i])
+  lines(den$x, den$y, col = colors[i], lwd = 2)
+}
+
+# save
+path <-
+  paste0("../../results/",
+         tool,
+         "/density/",
+         treatment,
+         "_",
+         tolower(tissue),
+         "_gene_density")
+saveToPDF(paste0(path, ".pdf"), width = 6, height = 4)
+```
+# Boxplots
+```{r boxplots}
+# set parameters
+par(mfrow = c(1, 3))
+
+# First look at dge.tech
+boxplot(
+  log2cpm.tech,
+  main = "A. Raw",
+  xlab = "",
+  ylab = expression('Counts per gene (Log'[2] ~ 'CPM)'),
+  axes = FALSE,
+  col = colors
+)
+axis(2) # 2 = left
+axis(
+  1,
+  # 1 = below
+  at = 1:nsamples,
+  # points at which tick-marks should be drawn
+  labels = colnames(log2cpm.tech),
+  las = 2,
+  cex.axis = 0.8 # size of axis
+)
+
+# Second, look at dge.filtered
+boxplot(
+  log2cpm.filtered,
+  main = "B. Filtered",
+  xlab = "",
+  ylab = expression('Counts per gene (Log'[2] ~ 'CPM)'),
+  axes = FALSE,
+  col = colors
+)
+axis(2)
+axis(
+  1,
+  at = 1:nsamples,
+  labels = colnames(log2cpm.filtered),
+  las = 2,
+  cex.axis = 0.8
+)
+
+# Third, look at dge.norm
+boxplot(
+  log2cpm.norm,
+  main = "C. Normalized",
+  xlab = "",
+  ylab = expression('Counts per gene (Log'[2] ~ 'CPM)'),
+  axes = FALSE,
+  col = colors
+)
+axis(2)
+axis(
+  1,
+  at = 1:nsamples,
+  labels = colnames(log2cpm.norm),
+  las = 2,
+  cex.axis = 0.8
+)
+
+# save
+path <-
+  paste0("../../results/",
+         tool,
+         "/boxplot/", 
+         treatment, 
+         "_",
+         tolower(tissue),
+         "_gene_boxplot")
+saveToPDF(paste0(path, ".pdf"), width = 6, height = 4)
+```
+# save filtered dge
+```{r save_dge_filtered_norm}
+saveRDS(dge.filtered.norm,
+        file = paste0(
+          "../../rObjects/",
+          treatment,
+          "_",
+          tool,
+          "_",
+          tolower(tissue),
+          "_dge.filtered.norm.rds"
+        ))
+```
+# Design matrix
+```{r design_matrix}
+min <- as.numeric(dge.filtered.norm$samples$duration_min)
+group <- interaction(dge.filtered.norm$samples$group)
+
+design <- model.matrix( ~ 0 + group + min)
+colnames(design) <- c(treatment, control, "min")
+
+design
+```
+# CPM
+```{r}
+# CPM, Counts Per Million normalize by sequencing depth
+cpm <- edgeR::cpm(dge.filtered.norm)
+# reorder so it's saline and then Ecoli samples
+path <- paste0("../../results/", tool, "/CPM/", treatment, "_",tolower(tissue),
+               "_gene_CPM_expression.txt")
+write.table(cpm, path, quote = FALSE, sep = "\t")
+
+lcpm <- edgeR::cpm(dge.filtered.norm, log = TRUE)
+path <- paste0("../../results/", tool, "/CPM/", treatment, "_",tolower(tissue),
+               "_gene_lcpm_expression.txt")
+write.table(cpm, path, quote = FALSE, sep = "\t")
+
+
+protein_coding_genes <- read.delim(paste0(
+      "../../results/",
+      tool,
+      "/v7_ensembl_protein_coding_genes.txt"))
+protein_coding_genes_gene <- subset(protein_coding_genes, type == "gene") 
+lcpm <- read.delim(paste0("../../results/", tool, "/CPM/", treatment, "_",tolower(tissue),
+               "_gene_lcpm_expression.txt"))
+lcpm$gene_id <- row.names(lcpm)
+lcpm_gene_name <- merge(lcpm, protein_coding_genes_gene, by = "gene_id")
+
+path <- paste0("../../results/", tool, "/CPM/", treatment, "_",tolower(tissue),
+               "_gene_lcpm_expression_gene_name.txt")
+write.table(lcpm_gene_name, path, quote = FALSE, sep = "\t", row.names = FALSE)
+```
+# Voom
+```{r voom}
+# voom transform counts
+v <- voomWithQualityWeights(dge.filtered.norm,
+                            design,
+                            plot = TRUE)
+
+# save
+path <-
+  paste0(
+    "../../results/",
+    tool,
+    "/voom/",
+    treatment,
+    "_",
+    tolower(tissue),
+    "_gene_mean_var_weights"
+  )
+saveToPDF(paste0(path, ".pdf"), width = 6, height = 4)
+
+# fits linear model for each gene given a series of arrays
+fit <- lmFit(v, design)
+
+# contrast design for differential expression
+contrasts <- makeContrasts(title = myContrasts, 
+                           levels = colnames(design))
+head(contrasts)
+
+# save contrast names
+allComparisons <- colnames(contrasts)
+allComparisons # check
+
+# run contrast analysis
+vfit <- contrasts.fit(fit, contrasts = contrasts)
+
+# Compute differential expression based on the empirical Bayes moderation of the
+# standard errors towards a common value.
+veBayesFit <- eBayes(vfit)
+plotSA(veBayesFit, main = "Final Model: Mean-variance Trend")
+
+# save
+path <-
+  paste0("../../results/",
+         tool,
+         "/voom/", treatment, "_",
+         tolower(tissue),
+         "_gene_final_mean_var")
+saveToPDF(paste0(path, ".pdf"), width = 6, height = 4)
+```
+
+```{r save_genelist}
+saveRDS(v,
+        file = paste0(
+          "../../rObjects/",
+          treatment,
+          "_",
+          tool,
+          "_",
+          tolower(tissue),
+          "_gene_voom.rds"
+        ))
+```
+# Number of DEGs
+Identify number of differentially expressed genes.
+```{r decide_tests}
+pval <- 0.05
+
+sumTable <- 
+  summary(decideTests(
+    vfit,  # object
+    adjust.method = "BH", # by default the method = "separate"
+    p.value = pval,
+    lfc = 0  # numeric, minimum absolute log2-fold change required
+  ))
+
+print(paste0(tissue, " FDRq < ", pval))
+head(sumTable)
+```
+# Output DEG tables
+```{r output_DEG_tables}
+coef <- 1
+
+for (i in allComparisons) {
+  # p < 1, log2fc > 0
+  vTopTableAll <-
+    topTable(
+      veBayesFit,
+      coef = coef,
+      n = Inf,
+      p.value = 1,
+      lfc = 0
+    )
+  #output as txt file
+  path <-
+    paste(
+      "../../results/",
+      tool,
+      "/DEGs/",
+      treatment,
+      "_",
+      tissue,
+      "_gene_DEGs_FDRq1.00.txt",
+      sep = ""
+    )
+  write.table(
+    vTopTableAll,
+    path,
+    sep = "\t",
+    row.names = FALSE,
+    quote = FALSE
+  )
+  
+  # p < 0.05, log2fc > 0
+  vTopTable1 <-
+    topTable(
+      veBayesFit,
+      coef = coef,
+      n = Inf,
+      p.value = 0.05,
+      lfc = 0
+    )
+  path <-
+    paste(
+      "../../results/",
+      tool,
+      "/DEGs/",
+      treatment,
+      "_",
+      tissue,
+      "_gene_DEGs_FDRq0.05.txt",
+      sep = ""
+    )
+  write.table(
+    vTopTable1,
+    path,
+    sep = "\t",
+    row.names = FALSE,
+    quote = FALSE
+  )
+  # increment
+  coef <- coef + 1
+}
+```
+Read and save table with all genes (FDRq = 1).
+```{r read_DEG_table}
+treatment_vs_control <- read.table(
+  paste0(
+    "../../results/",
+    tool,
+    "/DEGs/",
+    treatment,
+    "_",
+    tissue,
+    "_gene_DEGs_FDRq1.00.txt",
+    sep = ""
+  ),
+  header = TRUE,
+  sep = "\t",
+  stringsAsFactors = FALSE
+)
+
+saveRDS(
+  treatment_vs_control,
+  file = paste0(
+    "../../rObjects/",
+    treatment,
+    "_",
+    tool,
+    "_",
+    tolower(tissue),
+    "_gene_table.rds"
+  )
+)
+```
+# Assign colors
+Assign colors  values based on FDRq cutoff of 0.05.
+```{r assign_colors}
+color_values <- vector()
+max <- nrow(treatment_vs_control)
+
+for(i in 1:max){
+  if (treatment_vs_control$adj.P.Val[i] < 0.05){
+    if (treatment_vs_control$logFC[i] > 0){
+      color_values <- c(color_values, 1) # 1 when logFC > 0 and FDRq < 0.05
+    }
+    else if (treatment_vs_control$logFC[i] < 0){
+      color_values <- c(color_values, 2) # 2 when logFC < 0 and FDRq < 0.05
+    }
+  }
+  else{
+    color_values <- c(color_values, 3) # 3 when FDRq >= 0.05
+  }
+}
+
+treatment_vs_control$color_p0.05 <- factor(color_values)
+```
+
+# Subset genes to label
+Subset the top 10 up and down-regulated genes
+```{r}
+up <- treatment_vs_control[treatment_vs_control$color_p0.05 == 1, ]
+up10 <- up[1:10, ]
+
+down <- treatment_vs_control[treatment_vs_control$color_p0.05 == 2, ]
+down <- subset(down, down$logFC < -1.5)
+down10 <- down[1:7, ]
+```
+
+# Volcano plot
+```{r volcano}
+hadjpval <- (-log10(max(treatment_vs_control$P.Value[treatment_vs_control$adj.P.Val < 0.05],
+                        na.rm = TRUE)))
+
+p_vol <-
+  ggplot(data = treatment_vs_control,
+         aes(
+           x = logFC,
+           y = -log10(P.Value),
+           color = color_p0.05
+         )) +  
+  geom_point(alpha = 0.8, size = 1.7) +  
+  theme_bw() +  
+  theme(legend.position = "none") +  
+  scale_color_manual(values = c("red", "blue","grey")) +  
+  labs(
+    title = "",
+    x = expression(log[2](FC)),
+    y = expression(-log[10] ~ "(" ~ italic("p") ~ "-value)") 
+  ) +
+  theme(axis.title.x = element_text(size = 10),
+        axis.text.x = element_text(size = 10)) +
+  theme(axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 10)) +
+  geom_hline(yintercept = hadjpval,
+             colour = "#000000",
+             linetype = "dashed") +
+  ggtitle(paste0(tissue, " Ecoli vs Saline\nFDRq < 0.05")) +
+  theme(plot.title = element_text(size = 10)) +
+  geom_text_repel(
+    data = up10,
+    aes(
+      x = logFC,
+      y = -log10(P.Value),
+      label = gene_name
+    ),
+    color = "maroon",
+    fontface = "italic",
+    size = 3,
+    max.overlaps = getOption("ggrepel.max.overlaps", default = 30)
+  ) +
+  geom_text_repel(
+    data = down10,
+    aes(
+      x = logFC,
+      y = -log10(P.Value),
+      label = gene_name
+    ),
+    color = "navyblue",
+    fontface = "italic",
+    size = 3,
+    max.overlaps = getOption("ggrepel.max.overlaps", default = 15)
+  )  
+p_vol
+
+# save
+path <-
+  paste0(
+    "../../results/",
+    tool,
+    "/volcano/",
+    treatment,
+    "_",
+    tolower(tissue),
+    "_gene_volcano_FDRq0.05"
+  )
+saveToPDF(paste0(path, ".pdf"), width = 8, height = 6)
+```
+# Glimma output
+```{r}
+status <- decideTests(
+    vfit,  # object
+    adjust.method = "BH", # by default the method = "separate"
+    p.value = 0.05,
+    lfc = 0  # numeric, minimum absolute log2-fold change required
+  )
+library(Glimma)
+glimmaVolcano(veBayesFit, #status = status,
+              dge = dge.filtered.norm, groups = dge.filtered.norm$samples$group, 
+              display.columns=c("gene_name", "AdjPValue", "Chr"))
+```
+
+```{r}
+sessionInfo()
+```
+
+
+
+
+
