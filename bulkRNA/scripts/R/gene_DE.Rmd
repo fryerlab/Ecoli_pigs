@@ -34,6 +34,8 @@ library(gridExtra)
 library(grid)
 library(lattice)
 library(data.table)
+library(Glimma)
+library(rsconnect)
 ```
 
 # User defined variables
@@ -254,8 +256,9 @@ heatmap <- heatmap.2(
   notecol = "black",
   key.title = "Color Key",
   srtCol = 65,
-  margins = c(12,12),
+ # margins = c(12,12),
   keysize = 0.2)
+heatmap
 ```
 # Raw MDS with technical replicates
 ```{r MDS_techreps, warning=FALSE}
@@ -939,7 +942,7 @@ status <- decideTests(
     p.value = 0.05,
     lfc = 0  # numeric, minimum absolute log2-fold change required
   )
-library(Glimma)
+
 glimmaVolcano(veBayesFit, #status = status,
               dge = dge.filtered.norm, groups = dge.filtered.norm$samples$group, 
               display.columns=c("gene_name", "AdjPValue", "Chr"))
