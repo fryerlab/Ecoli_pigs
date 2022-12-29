@@ -46,9 +46,9 @@ treatment <- "Ecoli"
 control_color <- "gray29"
 treatment_color <- "green"
 myContrasts <- c("Ecoli - Saline")
-dose <- "low"
-excluded_pigs <- c("S4", "S5")
-tool <- c("star_low_dose_exclude_S4_S5") 
+dose <- "high"
+excluded_pigs <- c("S4", "S5", "E3", "E5", "E7")
+tool <- c("star_high_dose_exclude_S4_S5_E3_E5_E7") 
 typeOfCount <- c("STAR.bamReadsPerGene.out.tab") 
 pathToRef <- c("/research/labs/neurology/fryer/projects/references/pig/ensembl_v7/")
 ```
